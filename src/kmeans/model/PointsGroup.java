@@ -1,4 +1,4 @@
-package kmeans;
+package kmeans.model;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class PointsGroup {
 	private double minOffset;
 	private double maxOffset;
 	//the missing distance for jumping to another cluster
-	private double actualOffset;
+	private double foreignClusterMinimumDistance;
 	private double xSum;
 	private double ySum;
 	
@@ -21,7 +21,7 @@ public class PointsGroup {
 	public PointsGroup(double minOffset, double maxOffset){
 		this.minOffset = minOffset;
 		this.maxOffset = maxOffset;
-		this.actualOffset = Double.MAX_VALUE;
+		this.foreignClusterMinimumDistance = Double.MAX_VALUE;
 	}
 	
 	public double getMinOffset(){
@@ -47,8 +47,8 @@ public class PointsGroup {
 	public void addPoint(Point p, double foreignClusterOffset){
 		xSum += p.getX();
 		ySum += p.getY();
-		if (actualOffset>foreignClusterOffset){
-			actualOffset = foreignClusterOffset;
+		if (foreignClusterMinimumDistance>foreignClusterOffset){
+			foreignClusterMinimumDistance = foreignClusterOffset;
 		}
 		points.add(p);
 	}
@@ -66,7 +66,7 @@ public class PointsGroup {
 	}
 	
 	public double getForeignClusterMinimumDistance(){
-		return actualOffset;
+		return foreignClusterMinimumDistance;
 	}
 	
 	private static Double getUID() {

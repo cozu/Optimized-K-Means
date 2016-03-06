@@ -1,19 +1,21 @@
-package kmeans;
+package kmeans.standard;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class KmeansStandardCluster {
+import kmeans.model.Point;
+import kmeans.model.PointsGroup;
+
+public class StandardKMeansCluster {
 	public PointsGroup group = new PointsGroup(0,0);
 	
 	public Point center;
 	
-	public KmeansStandardCluster(Point center){
+	public StandardKMeansCluster(Point center){
 		this.center = center;
 	}
 	
 	public double getDistanceToCenter(Point p){
-		//return Math.sqrt(Math.pow((center.getX() - p.getX()), 2) + Math.pow(center.getY() - p.getY(), 2));
 		double x = center.getX() - p.getX();
 		double y = center.getY() - p.getY();
 		

@@ -1,9 +1,11 @@
-package kmeans;
+package kmeans.optimized;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class KMeans {
+import kmeans.model.Point;
+
+public class OptimizedKMeans {
 
 	private List<Point> centroids;
 
@@ -11,25 +13,25 @@ public class KMeans {
 
 	private int maxIterations = 0;
 
-	public KMeans(List<Point> centroids, List<Point> points, int maxIterations) {
+	public OptimizedKMeans(List<Point> centroids, List<Point> points, int maxIterations) {
 		this.centroids = centroids;
 		this.points = new LinkedList<>();
 		this.points = points;
 		this.maxIterations = maxIterations;
 	}
 
-	public List<KmeansCluster> compute() {
-		List<KmeansCluster> clusters = new LinkedList<>();
+	public List<OptimizedKmeansCluster> compute() {
+		List<OptimizedKmeansCluster> clusters = new LinkedList<>();
 		int iterations = 0;
 
 		for (Point center : centroids) {
-			clusters.add(new KmeansCluster(center));
+			clusters.add(new OptimizedKmeansCluster(center));
 		}
 
 		double maxDeviation = 0.0;
 		double minDistance = Double.MAX_VALUE;
 		double smallestDistanceToAForeignCenter = 0;
-		KmeansCluster ownerCluster = null;
+		OptimizedKmeansCluster ownerCluster = null;
 
 		do {
 			while (!points.isEmpty()) {
@@ -39,7 +41,7 @@ public class KMeans {
 
 				double[] distanceToCenters = new double[clusters.size()];
 				for (int i = 0; i < clusters.size(); i++) {
-					KmeansCluster cluster = clusters.get(i);
+					OptimizedKmeansCluster cluster = clusters.get(i);
 					double distanceToCenter = cluster.getDistanceToCenter(p);
 					distanceToCenters[i] = distanceToCenter;
 					if (distanceToCenter < minDistance) {
@@ -60,7 +62,7 @@ public class KMeans {
 			}
 			
 			maxDeviation = 0.0;
-			for (KmeansCluster cluster : clusters) {
+			for (OptimizedKmeansCluster cluster : clusters) {
 				double deviation = cluster.computeCenterAndGetDeviation();
 				if (deviation > maxDeviation) {
 					maxDeviation = deviation;
@@ -71,14 +73,14 @@ public class KMeans {
 				break;
 			}
 			
-			for (KmeansCluster cluster : clusters) {
+			for (OptimizedKmeansCluster cluster : clusters) {
 				points.addAll(cluster.removePointsByDeviation(maxDeviation));
 			}
 			iterations++;
 		} while (iterations < maxIterations	&& !points.isEmpty());
 
-		System.out.println("Iterations: " + iterations);
-		for (KmeansCluster cluster : clusters){
+		//System.out.println("Iterations: " + iterations);
+		for (OptimizedKmeansCluster cluster : clusters){
 			System.out.println(cluster);
 		}
 		return clusters;

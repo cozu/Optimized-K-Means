@@ -9,23 +9,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import kmeans.model.Point;
+import kmeans.optimized.OptimizedKMeans;
+import kmeans.standard.StandardKMeans;
+
 public class KMeansApp {
 
 	public static final int CENTROIDS_COUNT = 4;
 	public static final int MAX_ITERATIONS = 1000;
 	
 	public static void main(String[] args) {
-		Random rand = new Random(923593284);
-		
-		try {
-			DataOutputStream out = new DataOutputStream(new FileOutputStream("file"));
-			for (int i = 0; i < 500000; i++) {
-				 out.writeDouble(rand.nextDouble());
-				 out.writeDouble(rand.nextDouble());
-			}
-			out.close();
-		} catch (IOException e) {
-		}
+		//generateData();
 		
 		runKmeans(100000, 4);
 		runStandardKmeans(100000, 4);
@@ -56,10 +50,21 @@ public class KMeansApp {
 */		
 	}
 
-	private static void runKmeans(int nbOfPoints, int nbOfCentroids) {
-		List<Point> points = new LinkedList<>();
-		List<Point> centroids = new LinkedList<>();
+	private static void generateData() {
+		Random rand = new Random(923593284);
 		
+		try {
+			DataOutputStream out = new DataOutputStream(new FileOutputStream("file"));
+			for (int i = 0; i < 5000000; i++) {
+				 out.writeDouble(rand.nextDouble());
+				 out.writeDouble(rand.nextDouble());
+			}
+			out.close();
+		} catch (IOException e) {
+		}
+	}
+	
+	private static void loadData(int nbOfPoints, List<Point> points) {
 		try {
 			DataInputStream in = new DataInputStream(new FileInputStream("file"));
 			for (int i = 0; i < nbOfPoints; i++) {
@@ -68,13 +73,19 @@ public class KMeansApp {
 			in.close();
 		} catch (IOException e) {
 		}
+	}
+
+	private static void runKmeans(int nbOfPoints, int nbOfCentroids) {
+		List<Point> points = new LinkedList<>();
+		List<Point> centroids = new LinkedList<>();
+		
+		loadData(nbOfPoints, points);
 		
 		for(int i=0;i<nbOfCentroids;i++){
 			centroids.add(points.get(i));
 		}
 		
-		
-		KMeans kmeans = new KMeans(centroids, points, MAX_ITERATIONS);
+		OptimizedKMeans kmeans = new OptimizedKMeans(centroids, points, MAX_ITERATIONS);
 		long time = System.currentTimeMillis();
 		kmeans.compute();
 		System.out.println("Kmeans optimized (" + nbOfPoints + ", " + nbOfCentroids + ") => time:" + (System.currentTimeMillis() - time));
@@ -84,19 +95,11 @@ public class KMeansApp {
 		List<Point> points = new LinkedList<>();
 		List<Point> centroids = new LinkedList<>();
 		
-		try {
-			DataInputStream in = new DataInputStream(new FileInputStream("file"));
-			for (int i = 0; i < nbOfPoints; i++) {
-				points.add(new Point(in.readDouble(), in.readDouble()));
-			}
-			in.close();
-		} catch (IOException e) {
-		}
+		loadData(nbOfPoints, points);
 		
 		for(int i=0;i<nbOfCentroids;i++){
 			centroids.add(points.get(i));
 		}
-		
 		
 		StandardKMeans kmeans = new StandardKMeans(centroids, points, MAX_ITERATIONS);
 		long time = System.currentTimeMillis();

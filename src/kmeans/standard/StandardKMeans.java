@@ -1,7 +1,9 @@
-package kmeans;
+package kmeans.standard;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import kmeans.model.Point;
 
 public class StandardKMeans {
 
@@ -17,16 +19,16 @@ public class StandardKMeans {
 		this.maxIterations = maxIterations;
 	}
 	
-	public List<KmeansStandardCluster> compute(){
-		List<KmeansStandardCluster> clusters = new LinkedList<>();
+	public List<StandardKMeansCluster> compute(){
+		List<StandardKMeansCluster> clusters = new LinkedList<>();
 		int iterations = 0;
 		
 		for (Point center : centroids){
-			clusters.add(new KmeansStandardCluster(center));
+			clusters.add(new StandardKMeansCluster(center));
 		}
 		
 		double minDistance = Double.MAX_VALUE;
-		KmeansStandardCluster ownerCluster = null;
+		StandardKMeansCluster ownerCluster = null;
 		
 		double maxDeviation = 0.0;
 		
@@ -38,7 +40,7 @@ public class StandardKMeans {
 				Point p = points.get(0);
 				minDistance = Double.MAX_VALUE;
 				ownerCluster = null;
-				for (KmeansStandardCluster cluster : clusters){
+				for (StandardKMeansCluster cluster : clusters){
 					double distanceToCenter = cluster.getDistanceToCenter(p);
 					if (distanceToCenter < minDistance){
 						ownerCluster = cluster;
@@ -51,7 +53,7 @@ public class StandardKMeans {
 			
 			
 			maxDeviation = 0.0;
-			for (KmeansStandardCluster cluster : clusters){
+			for (StandardKMeansCluster cluster : clusters){
 				double deviation = cluster.computeCenterAndGetDeviation();
 				if (deviation > maxDeviation){
 					maxDeviation = deviation;
@@ -62,7 +64,7 @@ public class StandardKMeans {
 				break;
 			}
 			
-			for (KmeansStandardCluster cluster : clusters){
+			for (StandardKMeansCluster cluster : clusters){
 				points.addAll(cluster.removePointsByDeviation(maxDeviation));
 			}
 			
@@ -71,7 +73,7 @@ public class StandardKMeans {
 			totalTime += loopTime;
 		} while(maxDeviation>0 && iterations<maxIterations && !points.isEmpty());	
 		System.out.println("Total time: " + totalTime);
-		for (KmeansStandardCluster cluster : clusters){
+		for (StandardKMeansCluster cluster : clusters){
 			System.out.println(cluster);
 		}
 		return clusters;

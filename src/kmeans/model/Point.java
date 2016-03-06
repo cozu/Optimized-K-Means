@@ -1,4 +1,4 @@
-package kmeans;
+package kmeans.model;
 
 public class Point {
 	private double x;

@@ -1,4 +1,4 @@
-package kmeans;
+package kmeans.optimized;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -6,7 +6,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class KmeansCluster {
+import kmeans.model.Point;
+import kmeans.model.PointsGroup;
+
+public class OptimizedKmeansCluster {
 	public static final double INTERVALS_RESOLUTION = 0.1;
 
 	private static final Double INTERVALS_BORDER = 1.0;
@@ -15,7 +18,7 @@ public class KmeansCluster {
 	
 	public Point center;
 		
-	public KmeansCluster(Point center){
+	public OptimizedKmeansCluster(Point center){
 		this.center = center;
 	}
 	
@@ -37,9 +40,8 @@ public class KmeansCluster {
 		for(Double groupKey : keys){
 			PointsGroup group = intervals.get(groupKey);
 			if (groupKey < INTERVALS_BORDER){
-				if (intervals.containsKey(group.getUid())){
-					System.out.println("Group replacement");
-				}
+				//the group will be indexed by the group.getUid() key inside intervals hash,
+				//and a new empty group will replace it.
 				intervals.remove(groupKey);
 				intervals.put(group.getUid(), group);
 				intervals.put(groupKey, new PointsGroup(group.getMinOffset(), group.getMaxOffset()));
@@ -48,34 +50,24 @@ public class KmeansCluster {
 			group.setMinOffset(group.getMinOffset() - 2*deviation);
 			group.setMaxOffset(group.getMaxOffset() - 2*deviation);
 			
-			//d = difference between the minimum distance of the current point to other centroid and the distance of the current point
-			//to the current centroid. In other words, d is what the current point misses to jump to other cluster.
-			
-			//for each interval, store d min
-			//if d min is smaller than twice the deviation, the current interval gets invalidated.
 			if (group.getMinOffset() <=0){
+				//select points for re-check at next iteration
 				pointsRemoved.addAll(group.getPointsList());
 				intervals.remove(groupKey);
-				//System.out.println("Removed " + pointsRemoved.size() + " " + group.getPointsCount());
 			}
 		}
-		//System.out.println("Removed total: " + pointsRemoved.size());
-		//System.out.println("Remaining points: " + getPointsCount());
 		return pointsRemoved;
 	}
 	
 	public void addPoint(Point p, double distanceToCenter, double smallestForeignCenterDistance){
-		//TODO: the following will work only for interval resolution 0.1. to be updated later
 		double foreignClusterOffset = smallestForeignCenterDistance - distanceToCenter;
+		//TODO: the following will work only for interval resolution 0.1. to be updated later
 		Double groupKey = new Double((double)((int)(foreignClusterOffset*10))/10.0);
 		
 		PointsGroup group = intervals.get(groupKey);
 		if (group == null){
 			double intervalStart = groupKey.doubleValue();
 			group = new PointsGroup(intervalStart, intervalStart + INTERVALS_RESOLUTION);
-			if (intervals.containsKey(groupKey)){
-				System.out.println("Group replacement");
-			}
 			intervals.put(groupKey, group);
 		}
 		
