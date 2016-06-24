@@ -6,27 +6,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import kmeans.KMeansCluster;
 import kmeans.model.Point;
 import kmeans.model.PointsGroup;
 
-public class OptimizedKmeansCluster {
+public class OptimizedKmeansCluster extends KMeansCluster {
 	public static final double INTERVALS_RESOLUTION = 0.1;
 
 	private static final Double INTERVALS_BORDER = 1.0;
 	
 	public Map<Double, PointsGroup> intervals = new HashMap<Double, PointsGroup>();
-	
-	public Point center;
 		
 	public OptimizedKmeansCluster(Point center){
 		this.center = center;
-	}
-	
-	public double getDistanceToCenter(Point p){
-		double x = center.getX() - p.getX();
-		double y = center.getY() - p.getY();
-		
-		return Math.hypot(x, y);
 	}
 	
 	public List<Point> removePointsByDeviation(double deviation){
@@ -102,10 +94,6 @@ public class OptimizedKmeansCluster {
 		}
 		
 		return pointsCount;
-	}
-
-	public Point getCenter() {
-		return center;
 	}
 	
 	@Override

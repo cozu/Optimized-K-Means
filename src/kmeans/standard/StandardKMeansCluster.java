@@ -3,23 +3,15 @@ package kmeans.standard;
 import java.util.LinkedList;
 import java.util.List;
 
+import kmeans.KMeansCluster;
 import kmeans.model.Point;
 import kmeans.model.PointsGroup;
 
-public class StandardKMeansCluster {
+public class StandardKMeansCluster extends KMeansCluster {
 	public PointsGroup group = new PointsGroup(0,0);
-	
-	public Point center;
 	
 	public StandardKMeansCluster(Point center){
 		this.center = center;
-	}
-	
-	public double getDistanceToCenter(Point p){
-		double x = center.getX() - p.getX();
-		double y = center.getY() - p.getY();
-		
-		return Math.hypot(x, y);
 	}
 	
 	public List<Point> removePointsByDeviation(double deviation){
@@ -49,10 +41,6 @@ public class StandardKMeansCluster {
 	
 	public int getPointsCount(){
 		return group.getPointsCount();
-	}
-
-	public Point getCenter() {
-		return center;
 	}
 	
 	@Override
